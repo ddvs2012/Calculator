@@ -1,20 +1,24 @@
 $(document).ready(function(){
+	var inputString = ''; 
 	var input = [];
-	var inputString; 
 	var operators = ['/','*','+','-'];
 	var decimal = ['.'];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
 
-	function getValue(){
+	function getValue(input){
 
 	}
 	function update(){
-		if(operators.indexOf(input[input.length-1]) != -1 ){				
-			$('#numDisplay').html('');			
-		}
+		$('#process').html(inputString);
+
+		// if(operators.indexOf(input[input.length-1]) != -1 ){//if operator clicked, next	
+		// 	// inputString.push(input.join(''));		
+		// 	console.log(inputString);	
+		// 	$('#numDisplay').html('');
+
+		// }
 	}
 	function getTotal(){
-		inputString = input.join('');
 		$('#numDisplay').html(eval(inputString));
 	}
 	function findOne(haystack, needle){
@@ -23,97 +27,108 @@ $(document).ready(function(){
 		});
 	}
 	function operate(){ //calls gettotal when multiple operators are used
-		if(findOne(input,operators) === true){
+		if(findOne(inputString, operators) === true){
 				getTotal();
-				console.log(findOne(input,operators));
 			}
 	}
+	function reset(){ //if inputstring empty, replace display with input
+		if(inputString === '' || operators.indexOf(inputString[inputString.length-1]) != -1){
+				$('#numDisplay').html('');
+			}
+	}
+
 	
 	$('button').on("click", function(){ //when any button is clicked
-		update(); // should clear initial '0' on numDisplay ??
 //numbers
 		if(this.id === "decimal"){		
-			input.push(".");
-			console.log(input);	
+			inputString += ".";				
 			$('#numDisplay').append(".");	
 		}
-		if(this.id === "zero"){		
-			input.push(0);
-			console.log(input);	
+		if(this.id === "zero"){
+			reset();		
+			inputString += "0";	
 			$('#numDisplay').append(0);	
 		}
-		if(this.id === "one"){		
-			input.push(1);
-			console.log(input);	
+		if(this.id === "one"){
+			reset();		
+			inputString += "1";	
 			$('#numDisplay').append(1);	
 		}
 		if(this.id === "two"){
-			input.push(2);
-			console.log(input);
+			reset();
+			inputString += "2";
 			$('#numDisplay').append(2);	
 		}
-		if(this.id === "three"){		
-			input.push(3);
-			console.log(input);	
+		if(this.id === "three"){
+			reset();		
+			inputString += "3";	
 			$('#numDisplay').append(3);	
 		}
 		if(this.id === "four"){		
-			input.push(4);
-			console.log(input);	
+			reset();
+			inputString += "4";	
 			$('#numDisplay').append(4);	
 		}
 		if(this.id === "five"){
-			input.push(5);
-			console.log(input);
+			reset();
+			inputString += "5";
 			$('#numDisplay').append(5);	
 		}
 		if(this.id === "six"){		
-			input.push(6);
-			console.log(input);	
+			reset();
+			inputString += "6";	
 			$('#numDisplay').append(6);	
 		}
 		if(this.id === "seven"){		
-			input.push(7);
-			console.log(input);	
+			reset();
+			inputString += "7";	
 			$('#numDisplay').append(7);	
 		}
 		if(this.id === "eight"){
-			input.push(8);
-			console.log(input);
+			reset();
+			inputString += "8";
 			$('#numDisplay').append(8);	
 		}
 		if(this.id === "nine"){
-			input.push(9);
-			console.log(input);
+			reset();
+			inputString += "9";
 			$('#numDisplay').append(9);	
 		}
 //operations
 		if(this.id === "/"){
 			operate();
-			input.push('/');			
+			inputString += "/";			
 		}
 		if(this.id === "*"){
 			operate();
-			input.push('*');			
+			inputString += "*";			
 		}
 		if(this.id === "+"){
 			operate();
-			input.push('+');			
+			inputString += "+";			
 		}
 		if(this.id === "-"){
 			operate();
-			input.push('-');			
+			inputString += "-";			
 		}
 		if(this.id === "equals"){
 			getTotal();			
+			console.log(inputString);
 		}			
 		if(this.id === "clear"){
-			input = [];
+			inputString = '';
 			$('#numDisplay').html('0');	
 		}
-		
-	});	
+		if(this.id === "clearEntry"){
+			if (findOne(input, operators) === false){
+				inputString =[];
+			}
+			else{
 
+			}	
+		}
+		update();
+	});	
 });
 
 
