@@ -1,25 +1,34 @@
 $(document).ready(function(){
 	var inputString = ''; 
 	var input = [];
-	var operators = ['/','*','+','-'];
+	var operators = ['/','*','+','-','='];
 	var decimal = ['.'];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
+	var count = 0;
 
 	function getValue(input){
 
 	}
 	function update(){
-		$('#process').html(inputString);
+		count++;
+		lastDigit =  inputString.length-1;
 
+		$('#process').html(inputString);
+		if (operators.indexOf(inputString[inputString.length-1]) != -1){
+			input.push(inputString.slice(-count, lastDigit), inputString.slice(lastDigit)); //takes # of button presses, delimits at operators, stores the chunks into input
+			count=0;
+		}
+	
 		// if(operators.indexOf(input[input.length-1]) != -1 ){//if operator clicked, next	
 		// 	// inputString.push(input.join(''));		
 		// 	console.log(inputString);	
 		// 	$('#numDisplay').html('');
 
 		// }
+		console.log(input);
 	}
 	function getTotal(){
-		$('#numDisplay').html(eval(inputString));
+		$('#numDisplay').html(eval(inputString)); //change to input
 	}
 	function findOne(haystack, needle){
 		return needle.some(function(v){
@@ -111,21 +120,18 @@ $(document).ready(function(){
 			operate();
 			inputString += "-";			
 		}
-		if(this.id === "equals"){
+		if(this.id === "="){
 			getTotal();			
 			console.log(inputString);
 		}			
 		if(this.id === "clear"){
 			inputString = '';
+			input = [];
 			$('#numDisplay').html('0');	
 		}
 		if(this.id === "clearEntry"){
-			if (findOne(input, operators) === false){
-				inputString =[];
-			}
-			else{
-
-			}	
+			input.pop();
+			inputString = input.join('');
 		}
 		update();
 	});	
