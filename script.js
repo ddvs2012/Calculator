@@ -1,46 +1,37 @@
 $(document).ready(function(){
 	var inputString = ''; 
 	var input = [];
+
 	var operators = ['/','*','+','-','='];
 	var decimal = ['.'];
+	var operatorSequence = [];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
 	var count = 0;
 
-	function getValue(input){
-
-	}
-	function update(){
-		count++;
-		lastDigit =  inputString.length-1;
-
-		$('#process').html(inputString);
-		if (operators.indexOf(inputString[inputString.length-1]) != -1){
-			input.push(inputString.slice(-count, lastDigit), inputString.slice(lastDigit)); //takes # of button presses, delimits at operators, stores the chunks into input
-			count=0;
-		}
 	
-		// if(operators.indexOf(input[input.length-1]) != -1 ){//if operator clicked, next	
-		// 	// inputString.push(input.join(''));		
-		// 	console.log(inputString);	
-		// 	$('#numDisplay').html('');
-
-		// }
-		console.log(input);
+	function update(){
+		$('#process').html(inputString);
+		console.log(input, operatorSequence);
 	}
+
 	function getTotal(){
-		$('#numDisplay').html(eval(inputString)); //change to input
+		$('#numDisplay').html(eval(input.join(''))); //change to input
 	}
 	function findOne(haystack, needle){
 		return needle.some(function(v){
 			return haystack.indexOf(v) >= 0;
 		});
 	}
-	function operate(){ //calls gettotal when multiple operators are used
+	function operate(){ //calls gettotal when multiple operator button pressed after the first time
+		if(operatorSequence != []){
+			input.push($('#numDisplay').text());
+		}
+		// input.push(this.id.bind());  how to bind this to buttons?
 		if(findOne(inputString, operators) === true){
 				getTotal();
 			}
 	}
-	function reset(){ //if inputstring empty, replace display with input
+	function reset(){ //if inputstring empty or operator is lastindex, replace numdisplay with input
 		if(inputString === '' || operators.indexOf(inputString[inputString.length-1]) != -1){
 				$('#numDisplay').html('');
 			}
@@ -103,26 +94,35 @@ $(document).ready(function(){
 			inputString += "9";
 			$('#numDisplay').append(9);	
 		}
-//operations
+//operations: code seems redundant, needs bind
 		if(this.id === "/"){
 			operate();
+			input.push(this.id); 
 			inputString += "/";			
+			operatorSequence.push(this.id);
 		}
 		if(this.id === "*"){
 			operate();
+			input.push(this.id); 
 			inputString += "*";			
+			operatorSequence.push(this.id);
 		}
 		if(this.id === "+"){
 			operate();
+			input.push(this.id); 
 			inputString += "+";			
+			operatorSequence.push(this.id);
 		}
 		if(this.id === "-"){
 			operate();
+			input.push(this.id); 
 			inputString += "-";			
+			operatorSequence.push(this.id);
 		}
 		if(this.id === "="){
-			getTotal();			
-			console.log(inputString);
+			operate();
+			getTotal();		
+			operatorSequence = [];	
 		}			
 		if(this.id === "clear"){
 			inputString = '';
@@ -132,6 +132,7 @@ $(document).ready(function(){
 		if(this.id === "clearEntry"){
 			input.pop();
 			inputString = input.join('');
+			$('#numDisplay').html('0');
 		}
 		update();
 	});	
