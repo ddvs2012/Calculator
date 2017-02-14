@@ -1,138 +1,130 @@
 $(document).ready(function(){
-	var inputString = ''; 
 	var input = [];
+	var operands = [];
 
-	var operators = ['/','*','+','-','='];
+	var operators = ['/','*','+','-'];
 	var decimal = ['.'];
 	var operatorSequence = [];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
 	var count = 0;
-
 	
 	function update(){
-		$('#process').html(inputString);
-		console.log(input, operatorSequence);
+		$('#process').html(input);
+		count++;
+		console.log(input, operatorSequence, operands);
 	}
 
-	function getTotal(){
-		$('#numDisplay').html(eval(input.join(''))); //change to input
+	function getTotal(){	
+		// operands = [$('#numDisplay').text(),input[input.length - 2],input[input.length-1]];
+		$('#numDisplay').html(eval(input.join('')));
+	}
+	
+	function operate(){ //calls getTotal when multiple operator button pressed after the first time
+		if(operatorSequence[0] != "=" && count != 0){
+			input.push($('#numDisplay').text());
+		}
+		if(findOne(input, operators) === true){
+				getTotal();
+			}
+		count = -1; //update makes this 0, fulfilling reset condition to replace html
+		// input.push(this.id.bind());  how to bind this to buttons?
+		
+	}
+	function reset(){ //if  operator is lastindex, replace numdisplay with input
+		if(input.length === 0 || operators.indexOf(input[input.length-1]) != -1){
+			if(count === 0){
+				$('#numDisplay').html('');
+			}
+		}
 	}
 	function findOne(haystack, needle){
 		return needle.some(function(v){
 			return haystack.indexOf(v) >= 0;
 		});
-	}
-	function operate(){ //calls gettotal when multiple operator button pressed after the first time
-		if(operatorSequence != []){
-			input.push($('#numDisplay').text());
-		}
-		// input.push(this.id.bind());  how to bind this to buttons?
-		if(findOne(inputString, operators) === true){
-				getTotal();
-			}
-	}
-	function reset(){ //if inputstring empty or operator is lastindex, replace numdisplay with input
-		if(inputString === '' || operators.indexOf(inputString[inputString.length-1]) != -1){
-				$('#numDisplay').html('');
-			}
-	}
-
-	
+	}	
 	$('button').on("click", function(){ //when any button is clicked
 //numbers
 		if(this.id === "decimal"){		
-			inputString += ".";				
 			$('#numDisplay').append(".");	
 		}
 		if(this.id === "zero"){
-			reset();		
-			inputString += "0";	
+			reset();			
 			$('#numDisplay').append(0);	
 		}
 		if(this.id === "one"){
-			reset();		
-			inputString += "1";	
+			reset();			
 			$('#numDisplay').append(1);	
 		}
 		if(this.id === "two"){
 			reset();
-			inputString += "2";
 			$('#numDisplay').append(2);	
 		}
 		if(this.id === "three"){
-			reset();		
-			inputString += "3";	
+			reset();			
 			$('#numDisplay').append(3);	
 		}
 		if(this.id === "four"){		
-			reset();
-			inputString += "4";	
+			reset();	
 			$('#numDisplay').append(4);	
 		}
 		if(this.id === "five"){
 			reset();
-			inputString += "5";
 			$('#numDisplay').append(5);	
 		}
 		if(this.id === "six"){		
-			reset();
-			inputString += "6";	
+			reset();	
 			$('#numDisplay').append(6);	
 		}
 		if(this.id === "seven"){		
-			reset();
-			inputString += "7";	
+			reset();	
 			$('#numDisplay').append(7);	
 		}
 		if(this.id === "eight"){
 			reset();
-			inputString += "8";
 			$('#numDisplay').append(8);	
 		}
 		if(this.id === "nine"){
 			reset();
-			inputString += "9";
 			$('#numDisplay').append(9);	
 		}
 //operations: code seems redundant, needs bind
+		if(this.id === "="){
+			input.push($('#numDisplay').text());
+			getTotal();
+			operatorSequence = [];		
+			operatorSequence.push(this.id);	
+		}			
 		if(this.id === "/"){
 			operate();
-			input.push(this.id); 
-			inputString += "/";			
+			input.push(this.id); 						
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "*"){
 			operate();
-			input.push(this.id); 
-			inputString += "*";			
+			input.push(this.id); 						
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "+"){
 			operate();
-			input.push(this.id); 
-			inputString += "+";			
+			input.push(this.id); 		
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "-"){
 			operate();
-			input.push(this.id); 
-			inputString += "-";			
+			input.push(this.id); 			
 			operatorSequence.push(this.id);
 		}
-		if(this.id === "="){
-			operate();
-			getTotal();		
-			operatorSequence = [];	
-		}			
 		if(this.id === "clear"){
-			inputString = '';
 			input = [];
+			operatorSequence = [];
+			operands = [];
 			$('#numDisplay').html('0');	
+			count = -1; //update will make this zero again, reset condition fulfilled
 		}
 		if(this.id === "clearEntry"){
 			input.pop();
-			inputString = input.join('');
 			$('#numDisplay').html('0');
+			count = -1;
 		}
 		update();
 	});	

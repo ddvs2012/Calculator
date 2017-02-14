@@ -17,6 +17,9 @@
 	padding: 10px;
 }
 #process{
+	max-width: 34rem;
+	background-color: #AAFFF8;
+	overflow: hidden;
 	transform: translate(2rem,-3rem);
 	position: absolute;
 	align: right;
