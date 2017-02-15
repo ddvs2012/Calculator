@@ -7,11 +7,12 @@ $(document).ready(function(){
 	var operatorSequence = [];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
 	var count = 0;
+	var eqCount = 0;
 	
 	function update(){
 		$('#process').html(input);
 		count++;
-		console.log(input, operatorSequence, operands);
+		console.log(input, operatorSequence);
 	}
 
 	function getTotal(){	
@@ -20,7 +21,7 @@ $(document).ready(function(){
 	}
 	
 	function operate(){ //calls getTotal when multiple operator button pressed after the first time
-		if(operatorSequence[0] != "=" && count != 0){
+		if(operatorSequence[operatorSequence.length-1] != "=" && count != 0){
 			input.push($('#numDisplay').text());
 		}
 		if(findOne(input, operators) === true){
@@ -89,10 +90,16 @@ $(document).ready(function(){
 		}
 //operations: code seems redundant, needs bind
 		if(this.id === "="){
-			input.push($('#numDisplay').text());
-			getTotal();
-			operatorSequence = [];		
-			operatorSequence.push(this.id);	
+			if(eqCount > 0){
+				$('#numDisplay').html(eval([input[input.length-1],input[input.length-2],$('#numDisplay').text()].join('')));
+			}
+			else {
+				input.push($('#numDisplay').text());
+				getTotal();
+				operatorSequence = [];		
+				operatorSequence.push(this.id);	
+			}
+			eqCount++;
 		}			
 		if(this.id === "/"){
 			operate();
@@ -120,11 +127,13 @@ $(document).ready(function(){
 			operands = [];
 			$('#numDisplay').html('0');	
 			count = -1; //update will make this zero again, reset condition fulfilled
+			eqCount = 0;
 		}
 		if(this.id === "clearEntry"){
 			input.pop();
 			$('#numDisplay').html('0');
-			count = -1;
+			count = -1;  //update will make this zero again, reset condition fulfilled
+			eqCount = 0;
 		}
 		update();
 	});	
