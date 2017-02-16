@@ -6,8 +6,8 @@ $(document).ready(function(){
 	var decimal = ['.'];
 	var operatorSequence = [];
 	var numbers = [0,1,2,3,4,5,6,7,8,9];
-	var count = 0;
-	var eqCount = 0;
+	var count = 0; //number of times a button pressed before clear
+	var eqCount = 0; //number of times equals pressed before clear
 	
 	function update(){
 		$('#process').html(input);
@@ -20,23 +20,25 @@ $(document).ready(function(){
 		$('#numDisplay').html(eval(input.join('')));
 	}
 	
-	function operate(){ //calls getTotal when multiple operator button pressed after the first time
-		if(operatorSequence[operatorSequence.length-1] != "=" && count != 0){
-			input.push($('#numDisplay').text());
+	function operate(){ 
+		if(operatorSequence[operatorSequence.length-1] != "=" && count != 0){//if last ind. of opSeq not "="
+			input.push($('#numDisplay').text()); //and some numbers pressed, then push those numbers
 		}
-		if(findOne(input, operators) === true){
-				getTotal();
+		if(findOne(input, operators) === true){ //calls getTotal when multiple presses of operator button 
+				getTotal(); 
 			}
 		count = -1; //update makes this 0, fulfilling reset condition to replace html
 		// input.push(this.id.bind());  how to bind this to buttons?
+
 		
 	}
-	function reset(){ //if  operator is lastindex, replace numdisplay with input
-		if(input.length === 0 || operators.indexOf(input[input.length-1]) != -1){
+	function reset(){ //called when number pressed: if operator is lastindex, replace numdisplay with input
+		if(input.length === 0 || operators.indexOf(input[input.length-1]) != -1){ // or input is empty(to replace initial 0)
 			if(count === 0){
 				$('#numDisplay').html('');
 			}
 		}
+		eqCount = 0; // solved issue of: when eq pressed, next number would not get pushed to input
 	}
 	function findOne(haystack, needle){
 		return needle.some(function(v){
@@ -91,7 +93,12 @@ $(document).ready(function(){
 //operations: code seems redundant, needs bind
 		if(this.id === "="){
 			if(eqCount > 0){
-				$('#numDisplay').html(eval([input[input.length-1],input[input.length-2],$('#numDisplay').text()].join('')));
+				if(input[input.length-2] === "+" || input[input.length-2] === "*"){
+					$('#numDisplay').html(eval([input[input.length-1],input[input.length-2],$('#numDisplay').text()].join('')));
+				}
+				else{
+					$('#numDisplay').html(eval([$('#numDisplay').text(),input[input.length-2],input[input.length-1]].join('')));
+				}
 			}
 			else {
 				input.push($('#numDisplay').text());
@@ -103,24 +110,40 @@ $(document).ready(function(){
 		}			
 		if(this.id === "/"){
 			operate();
+			if(operators.indexOf(input[input.length-1]) > -1 || input.length == 0){
+				
+				return console.log('invalid keypress');
+			}
 			input.push(this.id); 						
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "*"){
 			operate();
+			if(operators.indexOf(input[input.length-1]) > -1 || input.length == 0){
+				
+				return console.log('invalid keypress');
+			}
 			input.push(this.id); 						
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "+"){
 			operate();
-			input.push(this.id); 		
+			if(operators.indexOf(input[input.length-1]) > -1 || input.length == 0){
+				
+				return console.log('invalid keypress');
+			}
+			input.push(this.id); 						
 			operatorSequence.push(this.id);
 		}
 		if(this.id === "-"){
 			operate();
-			input.push(this.id); 			
+			if(operators.indexOf(input[input.length-1]) > -1 || input.length == 0){
+				
+				return console.log('invalid keypress');
+			}
+			input.push(this.id); 						
 			operatorSequence.push(this.id);
-		}
+		}	
 		if(this.id === "clear"){
 			input = [];
 			operatorSequence = [];
