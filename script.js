@@ -1,3 +1,7 @@
+//issues:
+//	1.when multiple equal presses, doesn't push that value when another operator used
+//	2.pemdas is used to calculate long equations, should not be the case
+
 $(document).ready(function(){
 	var input = [];
 	var operands = [];
@@ -17,10 +21,14 @@ $(document).ready(function(){
 
 	function getTotal(){	
 		// operands = [$('#numDisplay').text(),input[input.length - 2],input[input.length-1]];
-		$('#numDisplay').html(eval(input.join('')));
+		$('#numDisplay').html(roundTo(eval(input.join('')), 5));
 	}
 	
 	function operate(){ 
+		if(operatorSequence[operatorSequence.length-1] === "="){
+			input = [];
+			input.push($('#numDisplay').text());
+		}
 		if(operatorSequence[operatorSequence.length-1] != "=" && count != 0){//if last ind. of opSeq not "="
 			input.push($('#numDisplay').text()); //and some numbers pressed, then push those numbers
 		}
@@ -30,7 +38,6 @@ $(document).ready(function(){
 		count = -1; //update makes this 0, fulfilling reset condition to replace html
 		// input.push(this.id.bind());  how to bind this to buttons?
 
-		
 	}
 	function reset(){ //called when number pressed: if operator is lastindex, replace numdisplay with input
 		if(input.length === 0 || operators.indexOf(input[input.length-1]) != -1){ // or input is empty(to replace initial 0)
@@ -45,10 +52,18 @@ $(document).ready(function(){
 			return haystack.indexOf(v) >= 0;
 		});
 	}	
+
+	function roundTo(num, dec) { //rounds num to dec places
+    	return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+	}
 	$('button').on("click", function(){ //when any button is clicked
+		// document.getElementById(this.id).style.transform = 'translate(0,2px)';
+
 //numbers
-		if(this.id === "decimal"){		
-			$('#numDisplay').append(".");	
+		if(this.id === "decimal"){
+			if($('#numDisplay').text().indexOf('.') === -1){
+				$('#numDisplay').append(".");	
+			}		
 		}
 		if(this.id === "zero"){
 			reset();			
@@ -93,11 +108,11 @@ $(document).ready(function(){
 //operations: code seems redundant, needs bind
 		if(this.id === "="){
 			if(eqCount > 0){
-				if(input[input.length-2] === "+" || input[input.length-2] === "*"){
-					$('#numDisplay').html(eval([input[input.length-1],input[input.length-2],$('#numDisplay').text()].join('')));
+				if(input[input.length-2] === "+" || input[input.length-2] === "*"){ //order of calculation when + or * vs when - or /
+					$('#numDisplay').html(roundTo(eval([input[input.length-1],input[input.length-2],$('#numDisplay').text()].join('')),5));
 				}
 				else{
-					$('#numDisplay').html(eval([$('#numDisplay').text(),input[input.length-2],input[input.length-1]].join('')));
+					$('#numDisplay').html(roundTo(eval([$('#numDisplay').text(),input[input.length-2],input[input.length-1]].join('')),10));					
 				}
 			}
 			else {
@@ -154,6 +169,7 @@ $(document).ready(function(){
 		}
 		if(this.id === "clearEntry"){
 			input.pop();
+			operatorSequence = [];
 			$('#numDisplay').html('0');
 			count = -1;  //update will make this zero again, reset condition fulfilled
 			eqCount = 0;
